@@ -2,7 +2,7 @@ const wordContainer = document.getElementById('wordContainer');
 const startButton = document.getElementById('startButton');
 const usedLettersElement = document.getElementById('usedLetters');
 
-let canvas = document.getElementById('canvas');
+let canvcas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 ctx.canvas.width  = 0;
 ctx.canvas.height = 0;
@@ -21,6 +21,53 @@ let usedLetters;
 let mistakes;
 let hits;
 
+const endGame = () => {
+    document.removeEventListener('keydown',letterEvent);
+    startButton.style.display = 'block';
+}
+
+const correctLetter = letter => {
+    const { children } = wordContainer;
+    for(let i = 0; i < children.length; i++){
+        if(children[i].innerHTML === letter) {
+            children[i].classList.toggle("hidden");
+            hits++;
+        }
+    }
+    if(hits === selectdWord.length) endGame();
+}
+
+const letterInput = letter => {
+    if(selectdWord.includes(letter)) {
+        correctLetter(letter);
+    } else {
+     wrongLetter();
+    }
+
+};
+
+const letterEvent = event => {
+    let newLetter = event.key.toUpperCase();
+    if(newLetter.match(/^[a-zñ]$/i) && !usedLetters.includes(newLetter)) {
+     letterInput(newLetter);
+    };
+}
+
+
+const drawWord = () => {
+    selectdWord.forEach(leatter => {
+     const letterElement = document.createElement('span');
+     letterElement.innerHTML = leatter.usedLetters();
+     letterElement.classList.add('letter');
+     letterElement.classList.add('hidden');
+     wordContainer.appendChild(letterElement);
+    });
+};
+
+const selectRandomWord = () =>{
+    let word = words[Math.floor((Math.random()*word.length))].toUpperCase();
+    selectdWord = word.split('');  
+} 
 
 const drawHangMan = () => {
     ctx.canvas.width = 120;
@@ -42,6 +89,9 @@ const startGame = () => {
    usedLettersElement.innerHTML = '';
    startButton.style.display = 'none';
    drawHangMan();
+   selectRandomWord();
+   drawWord();
+   document.addEventListener('keydown', letterEvent);
 };
 
 startButton.addEventListener('click', startGame);
