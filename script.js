@@ -2,7 +2,7 @@ const wordContainer = document.getElementById('wordContainer');
 const startButton = document.getElementById('startButton');
 const usedLettersElement = document.getElementById('usedLetters');
 
-let canvcas = document.getElementById('canvas');
+let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 ctx.canvas.width  = 0;
 ctx.canvas.height = 0;
@@ -20,6 +20,25 @@ let selectdWord;
 let usedLetters;
 let mistakes;
 let hits;
+
+const addLetter = letter => {
+    const letterElement = document.createElement('span');
+    letterElement.innerHTML = letter.toUpperCase();
+    usedLettersElement.appendChild(letterElement);
+}
+
+
+const addBodypart = bodyParts => {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(...bodyParts);
+}
+
+
+const wrongLetter = () => {
+    addBodypart(bodyParts[mistakes]);
+    mistakes++;
+    if(mistakes === bodyParts.length) endGame();
+}
 
 const endGame = () => {
     document.removeEventListener('keydown',letterEvent);
@@ -43,6 +62,8 @@ const letterInput = letter => {
     } else {
      wrongLetter();
     }
+    addLetter(letter);
+    usedLetters.push(letter);
 
 };
 
@@ -57,7 +78,7 @@ const letterEvent = event => {
 const drawWord = () => {
     selectdWord.forEach(leatter => {
      const letterElement = document.createElement('span');
-     letterElement.innerHTML = leatter.usedLetters();
+     letterElement.innerHTML = leatter.toUpperCase();
      letterElement.classList.add('letter');
      letterElement.classList.add('hidden');
      wordContainer.appendChild(letterElement);
@@ -65,7 +86,7 @@ const drawWord = () => {
 };
 
 const selectRandomWord = () =>{
-    let word = words[Math.floor((Math.random()*word.length))].toUpperCase();
+    let word = words[Math.floor((Math.random() * words.length))].toUpperCase();
     selectdWord = word.split('');  
 } 
 
